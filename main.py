@@ -16,11 +16,11 @@ if __name__ == '__main__':
     cliParser = argparse.ArgumentParser(description="Radar file conversion tool")
 
     cliParser.add_argument('Path', metavar='path', type=str, help='path to input file')
-    cliParser.add_argument('Output', choices=['hdf5', 'netcdf', 'ascii', 'bufr', 'iris'])
+    cliParser.add_argument('Output', choices=['h5', 'netcdf', 'ascii', 'bufr', 'iris'])
 
     args = cliParser.parse_args()
 
-    allowedInputFormats = {'hdf5', 'netcdf'}
+    allowedInputFormats = {'h5', 'netcdf'}
     inputFile = args.Path
     inputFormat = inputFile.split('.')[-1]
     outputFormat = args.Output
@@ -37,7 +37,7 @@ if __name__ == '__main__':
         print("Input and output format are the same")
         sys.exit()
 
-    if inputFormat == 'hdf5':
+    if inputFormat == 'h5':
         convert_from_h5(inputFile, outputFormat)
     elif inputFile == 'netcdf':
         convert_from_netcdf(inputFile, outputFormat)
