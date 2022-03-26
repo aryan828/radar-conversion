@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import os
+import subprocess
 from tkinter import *
 from tkinter import filedialog
 
@@ -17,7 +18,7 @@ class RadarConversion():
         self.selected_file_format = None
         self.master = master
         master.title("Radar Conversion")
-        master.geometry("400x300")
+        master.geometry("400x200")
         master.resizable(False, False)
         self.create_widgets()
         self.pack_widgets()
@@ -25,7 +26,7 @@ class RadarConversion():
     def create_widgets(self):
         self.label = Label(self.master, text="Select a file to convert")
         self.button = Button(self.master, text="Select File", command=self.select_file)
-        self.h5_to_nc = Button(self.master, text="Convert", command=self.convert_to_nc)
+        self.h5_to_nc = Button(self.master, text="Convert to NetCDF", command=self.convert_to_nc)
         self.h5_to_ascii = Button(self.master, text="Convert to ASCII", command=self.convert_to_ascii)
         self.nc_to_h5 = Button(self.master, text="Convert to HDF5", command=self.convert_to_h5)
         self.nc_to_ascii = Button(self.master, text="Convert to ASCII", command=self.convert_to_ascii)
@@ -58,22 +59,34 @@ class RadarConversion():
         os.system(sys_inp)
 
     def convert_to_ascii(self):
-        out = self.selected_file.split(".")[0] + ".cdl"
         if self.selected_file_format == 'nc':
+            out = self.selected_file.split(".")[0] + ".cdl"
             system_input = r'ncdump -b c '
             system_input += self.selected_file
             system_input += r' > '
             system_input += out
             os.system(system_input)
         elif self.selected_file_format == 'h5':
-            system_input = r'h5dump -o '
-            system_input += out
-            system_input += r' -y -w 4000 '
+            system_input = r'h5dump --ddl='
+            system_input += self.selected_file.split(".")[0] + "_ddl.txt "
+            system_input += r'-o ' + self.selected_file.split(".")[0] + "_raw.txt "
             system_input += self.selected_file
+            os.system(system_input)
 
-    # TODO: Add convert to h5
     def convert_to_h5(self):
-        pass
+        result = str(subprocess.check_output(['ncdump', '-k', self.selected_file]).strip())
+        print(result, type(result))
+        if result == "b'classic'" or result == "b'64-bit offset'":
+            inter = self.selected_file.split(".")[0] + "_intermediate.nc"
+            system_input = r'nccopy -k 4 '
+            system_input += self.selected_file
+            system_input += r' '
+            system_input += inter
+            os.system(system_input)
+            os.system(r'cp ' + inter + ' ' + self.selected_file.split(".")[0] + ".h5")
+            os.system(r'rm ' + inter)
+        elif result == "b'netCDF-4'" or result == "b'netCDF-4 classic model'":
+            os.system(r'cp ' + self.selected_file + ' ' + self.selected_file.split(".")[0] + ".h5")
 
 
 root = Tk()
