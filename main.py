@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
 import os
-import sys
 from tkinter import *
 from tkinter import filedialog
 
@@ -61,8 +60,7 @@ class RadarConversion():
         if self.selected_file_format == 'nc':
             system_input = r'ncdump -b c '
             system_input += self.selected_file
-            system_input += r' > '
-            system_input += r'output.cdl'
+            system_input += r' > output.cdl'
             os.system(system_input)
         elif self.selected_file_format == 'h5':
             system_input = r'h5dump -o output.cdl -y -w 4000 '
