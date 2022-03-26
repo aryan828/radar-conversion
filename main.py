@@ -8,6 +8,7 @@ from tkinter import filedialog
 
 class RadarConversion():
     def __init__(self, master):
+        self.file_label = None
         self.nc_to_ascii = None
         self.h5_to_ascii = None
         self.nc_to_h5 = None
@@ -36,12 +37,23 @@ class RadarConversion():
         self.button.pack()
 
     def select_file(self):
+        if self.file_label is not None:
+            self.file_label.destroy()
+        if self.nc_to_ascii is not None:
+            self.nc_to_ascii.pack_forget()
+        if self.h5_to_ascii is not None:
+            self.h5_to_ascii.pack_forget()
+        if self.nc_to_h5 is not None:
+            self.nc_to_h5.pack_forget()
+        if self.h5_to_nc is not None:
+            self.h5_to_nc.pack_forget()
+
         self.selected_file = filedialog.askopenfilename(initialdir="~/Downloads", title="Select file",
                                                         filetypes=(("HDF5", "*.h5"), ("NetCDF", "*.nc")))
         if self.selected_file:
             self.selected_file_format = self.selected_file.split(".")[-1]
-            label = Label(self.master, text='Selected File:\n' + self.selected_file)
-            label.pack(padx=10, pady=10)
+            self.file_label = Label(self.master, text='Selected File:\n' + self.selected_file)
+            self.file_label.pack(padx=10, pady=10)
             if self.selected_file_format == "h5":
                 self.h5_to_nc.pack(side=LEFT, padx=10)
                 self.h5_to_ascii.pack(side=RIGHT, padx=10)
