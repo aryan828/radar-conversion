@@ -40,14 +40,14 @@ class RadarConversion():
                                                         filetypes=(("HDF5", "*.h5"), ("NetCDF", "*.nc")))
         if self.selected_file:
             self.selected_file_format = self.selected_file.split(".")[-1]
-            label = Label(self.master, text='Selected File: ' + self.selected_file)
+            label = Label(self.master, text='Selected File:\n' + self.selected_file)
             label.pack(padx=10, pady=10)
             if self.selected_file_format == "h5":
-                self.h5_to_nc.pack()
-                self.h5_to_ascii.pack()
+                self.h5_to_nc.pack(side=LEFT, padx=10)
+                self.h5_to_ascii.pack(side=RIGHT, padx=10)
             elif self.selected_file_format == "nc":
-                self.nc_to_h5.pack()
-                self.nc_to_ascii.pack()
+                self.nc_to_h5.pack(side=LEFT, padx=10)
+                self.nc_to_ascii.pack(side=RIGHT, padx=10)
             else:
                 print("File format not supported")
 
@@ -64,7 +64,11 @@ class RadarConversion():
             system_input += r' > '
             system_input += r'output.cdl'
             os.system(system_input)
+        elif self.selected_file_format == 'h5':
+            system_input = r'h5dump -o output.cdl -y -w 4000 '
+            system_input += self.selected_file
 
+    # TODO: Add convert to h5
     def convert_to_h5(self):
         pass
 
