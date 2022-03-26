@@ -17,7 +17,7 @@ class RadarConversion():
         self.selected_file_format = None
         self.master = master
         master.title("Radar Conversion")
-        master.geometry("400x200")
+        master.geometry("400x300")
         master.resizable(False, False)
         self.create_widgets()
         self.pack_widgets()
@@ -35,7 +35,7 @@ class RadarConversion():
         self.button.pack()
 
     def select_file(self):
-        self.selected_file = filedialog.askopenfilename(initialdir="~", title="Select file",
+        self.selected_file = filedialog.askopenfilename(initialdir="~/Downloads", title="Select file",
                                                         filetypes=(("HDF5", "*.h5"), ("NetCDF", "*.nc")))
         if self.selected_file:
             self.selected_file_format = self.selected_file.split(".")[-1]
@@ -51,19 +51,24 @@ class RadarConversion():
                 print("File format not supported")
 
     def convert_to_nc(self):
+        out = ' ' + self.selected_file.split(".")[0] + ".nc"
         sys_inp = r'ncks '
         sys_inp += self.selected_file
-        sys_inp += r'output.nc'
+        sys_inp += out
         os.system(sys_inp)
 
     def convert_to_ascii(self):
+        out = self.selected_file.split(".")[0] + ".cdl"
         if self.selected_file_format == 'nc':
             system_input = r'ncdump -b c '
             system_input += self.selected_file
-            system_input += r' > output.cdl'
+            system_input += r' > '
+            system_input += out
             os.system(system_input)
         elif self.selected_file_format == 'h5':
-            system_input = r'h5dump -o output.cdl -y -w 4000 '
+            system_input = r'h5dump -o '
+            system_input += out
+            system_input += r' -y -w 4000 '
             system_input += self.selected_file
 
     # TODO: Add convert to h5
